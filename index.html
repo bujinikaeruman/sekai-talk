@@ -76,7 +76,7 @@ const source=document.querySelector("#source"),result=document.querySelector("#r
 const talkA=document.querySelector("#talkA"),talkB=document.querySelector("#talkB");
 const labelA=document.querySelector("#labelA"),labelB=document.querySelector("#labelB");
 const cache=new Map();
-let recognition=null,finalText="",activeSide="",cancelled=false,requestController=null;
+let recognition=null,finalText="",activeSide="",cancelled=false,recognitionError="",requestController=null;
 for(const [name,code] of languages){langA.add(new Option(name,code));langB.add(new Option(name,code))}
 langA.value="ja";langB.value="en";
 function languageName(code){return languages.find(x=>x[1]===code)?.[0]||code}
@@ -95,12 +95,12 @@ async function translateText(autoSpeak=false){
  const key=from+"|"+to+"|"+text;
  if(cache.has(key)){result.textContent=cache.get(key);setStatus("翻訳しました。");if(autoSpeak)readAloud(to);return}
  if(requestController)requestController.abort();
- requestController=new AbortController();
- const timer=setTimeout(()=>requestController?.abort(),15000);
+ const controller=new AbortController();requestController=controller;
+ const timer=setTimeout(()=>controller.abort(),15000);
  setStatus("翻訳しています…");
  try{
   const url="https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair="+encodeURIComponent(from+"|"+to);
-  const response=await fetch(url,{signal:requestController.signal});
+  const response=await fetch(url,{signal:controller.signal});
   if(!response.ok)throw new Error("network");
   const data=await response.json();
   if(data.responseStatus!==200)throw new Error(data.responseDetails||"service");
@@ -112,7 +112,7 @@ async function translateText(autoSpeak=false){
  }catch(error){
   if(error.name==="AbortError")setStatus("翻訳に時間がかかっています。通信を確認して、もう一度お試しください。");
   else setStatus("翻訳できませんでした。少し待ってから、もう一度お試しください。");
- }finally{clearTimeout(timer);requestController=null}
+ }finally{clearTimeout(timer);if(requestController===controller)requestController=null}
 }
 function readAloud(code){
  const text=result.textContent;
@@ -129,8 +129,8 @@ function readAloud(code){
 function startListening(side){
  const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SpeechRecognition){setStatus("このブラウザは音声入力に対応していません。下の欄に文字を入力してください。");return}
- if(recognition){stopListening();return}
- activeSide=side;finalText="";cancelled=false;source.value="";
+ if(recognition){if(activeSide===side){stopListening();setStatus("聞き取りを終了します…")}else{setStatus("今の聞き取りが終わってから、次の人のボタンを押してください。")}return}
+ activeSide=side;finalText="";cancelled=false;recognitionError="";source.value="";
  const from=side==="A"?langA.value:langB.value;
  const to=side==="A"?langB.value:langA.value;
  if(from===to){setStatus("異なる言語を選んでください。");return}
@@ -147,15 +147,16 @@ function startListening(side){
   source.value=(finalText+interim).trim();
  };
  rec.onerror=(event)=>{
-  if(event.error==="not-allowed"||event.error==="service-not-allowed")setStatus("マイクの使用が許可されていません。ブラウザの設定を確認してください。");
-  else if(event.error!=="no-speech"&&event.error!=="aborted")setStatus("音声を聞き取れませんでした。もう一度お試しください。");
+  if(event.error==="not-allowed"||event.error==="service-not-allowed")recognitionError="マイクの使用が許可されていません。ブラウザの設定を確認してください。";
+  else if(event.error!=="no-speech"&&event.error!=="aborted")recognitionError="音声入力でエラーが発生しました。もう一度お試しください。";
  };
  rec.onend=()=>{
   recognition=null;talkA.classList.remove("listening");talkB.classList.remove("listening");
   const heard=finalText.trim();
   if(heard){source.value=heard;activeSide=side;translateText(true)}
+  else if(recognitionError)setStatus(recognitionError);
   else if(!cancelled)setStatus("声を確認できませんでした。マイクに近づいて、もう一度お試しください。");
-  cancelled=false;
+  cancelled=false;recognitionError="";
  };
  try{rec.start()}catch{recognition=null;talkA.classList.remove("listening");talkB.classList.remove("listening");setStatus("音声入力を開始できませんでした。もう一度お試しください。")}
 }
