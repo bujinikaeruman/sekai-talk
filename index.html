@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#173b35">
+<link rel="manifest" href="./manifest.webmanifest">
 <title>Sekai Talk | 音声翻訳</title>
 <style>
 :root{color-scheme:light;--ink:#173b35;--muted:#65736f;--paper:#f5f6f1;--line:#dce3dc;--accent:#b69a62}
@@ -69,5 +70,8 @@ document.querySelector("#speak").onclick=()=>{
  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=to.value==="zh"?"zh-CN":to.value;speechSynthesis.speak(u);
 };
 document.querySelector("#copy").onclick=async()=>{try{await navigator.clipboard.writeText(result.textContent);status.textContent="翻訳結果をコピーしました。"}catch{status.textContent="コピーできませんでした。"}};
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+}
 </script>
 </body></html>
