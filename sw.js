@@ -1,4 +1,4 @@
-const CACHE_NAME = "sekai-talk-v4";
+const CACHE_NAME = "sekai-talk-v5";
 const APP_FILES = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png"];
 
 self.addEventListener("install", (event) => {
