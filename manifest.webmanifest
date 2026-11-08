@@ -1,0 +1,12 @@
+{
+  "name": "Sekai Talk",
+  "short_name": "Sekai Talk",
+  "description": "話して、訳して、声で伝える音声翻訳アプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f1",
+  "theme_color": "#173b35",
+  "icons": []
+}
