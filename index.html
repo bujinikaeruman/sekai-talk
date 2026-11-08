@@ -5,73 +5,167 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#173b35">
 <link rel="manifest" href="./manifest.webmanifest">
-<title>Sekai Talk | 音声翻訳</title>
+<title>Sekai Talk | かんたん会話翻訳</title>
 <style>
-:root{color-scheme:light;--ink:#173b35;--muted:#65736f;--paper:#f5f6f1;--line:#dce3dc;--accent:#b69a62}
-*{box-sizing:border-box}body{margin:0;background:var(--paper);color:#1d2926;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
-header{background:var(--ink);color:white;padding:24px 20px 28px}header small{letter-spacing:.16em;color:#d9c99e}h1{margin:8px 0 4px;font-size:29px;font-weight:650}header p{margin:0;color:#d9e2dc;font-size:13px}
-main{max-width:680px;margin:auto;padding:18px 16px 40px}.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 5px 20px #173b3508}
-label{display:block;font-size:13px;font-weight:650;color:var(--muted);margin:0 0 8px}
-select,textarea{width:100%;font:inherit;border:1px solid var(--line);border-radius:12px;background:#fff;padding:13px;color:#1d2926}
-.languages{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}.swap{height:46px;width:44px;border:1px solid var(--line);border-radius:12px;background:#f8f8f4;font-size:20px;color:var(--ink)}
-textarea{min-height:130px;resize:vertical;line-height:1.6}.output{min-height:110px;background:#f8faf7;border-radius:12px;padding:14px;white-space:pre-wrap;line-height:1.65;overflow-wrap:anywhere}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:13px 16px;font-weight:650}
-.primary{background:var(--ink);color:white;flex:1}.secondary{background:#edf1eb;color:var(--ink)}button:disabled{opacity:.5}
-.status{font-size:12px;color:var(--muted);min-height:20px;margin-top:10px}.note{font-size:12px;color:var(--muted);line-height:1.6;margin:14px 2px}
-@media(max-width:390px){.languages{gap:6px}select{padding:11px 7px;font-size:14px}.swap{width:38px}}
+:root{color-scheme:light;--ink:#173b35;--paper:#f4f6f1;--line:#d9e1da;--muted:#5c6c65;--gold:#c5a76a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:#17231f;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}
+header{background:var(--ink);color:#fff;padding:20px 18px 22px;text-align:center}
+header small{font-size:11px;letter-spacing:.16em;color:#e3d2a8}
+h1{font-size:28px;margin:5px 0;font-weight:750}
+header p{margin:0;color:#e2e9e4;font-size:14px}
+main{max-width:650px;margin:auto;padding:16px 14px 34px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px;margin-bottom:13px}
+.section-title{font-size:16px;font-weight:750;margin:0 0 12px}
+.language-grid{display:grid;grid-template-columns:minmax(0,1fr) 42px minmax(0,1fr);gap:8px;align-items:end}
+label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:0 0 7px}
+select,textarea{width:100%;font:inherit;border:1px solid #cbd6ce;border-radius:12px;background:#fff;color:#17231f;padding:13px}
+select{font-size:16px;min-height:52px}
+.swap{height:52px;border:1px solid var(--line);border-radius:12px;background:#edf2ed;color:var(--ink);font-size:23px}
+.talk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.talk-button{min-height:112px;border:0;border-radius:16px;background:var(--ink);color:#fff;padding:13px 8px;font-size:20px;font-weight:800;line-height:1.3;box-shadow:0 3px 0 #0c2924}
+.talk-button span{display:block;font-size:13px;font-weight:550;margin-top:7px;color:#e1e9e3}
+.talk-button.listening{background:#9a452d;box-shadow:0 3px 0 #71301f}
+.status{min-height:26px;margin-top:12px;padding:6px 2px 0;font-size:14px;font-weight:650;color:var(--ink);text-align:center}
+textarea{min-height:86px;resize:vertical;line-height:1.55;font-size:17px}
+.output{min-height:90px;background:#f5f8f4;border:1px solid #e3eae3;border-radius:12px;padding:14px;font-size:20px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.actions{display:flex;gap:9px;margin-top:10px}
+button{font:inherit;cursor:pointer}
+.small-button{flex:1;min-height:48px;border:0;border-radius:12px;background:#eaf0e9;color:var(--ink);font-size:15px;font-weight:750;padding:10px}
+.small-button:disabled{opacity:.5}
+.hint{font-size:12px;color:var(--muted);line-height:1.65;margin:12px 2px 0}
+@media(max-width:380px){.talk-button{font-size:17px;min-height:104px}.language-grid{grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr);gap:5px}select{padding:11px 6px;font-size:14px}.swap{font-size:20px}}
 </style>
 </head>
 <body>
-<header><small>LANGUAGE, WITHOUT BORDERS</small><h1>Sekai Talk</h1><p>話して、訳して、声で伝える。</p></header>
+<header><small>LANGUAGE, WITHOUT BORDERS</small><h1>Sekai Talk</h1><p>ボタンを押して話すだけ。かんたん会話翻訳。</p></header>
 <main>
 <section class="panel">
-<div class="languages">
-<div><label for="from">翻訳元</label><select id="from"></select></div>
-<button class="swap" id="swap" aria-label="言語を入れ替え">⇄</button>
-<div><label for="to">翻訳先</label><select id="to"></select></div>
+<p class="section-title">① 会話する言語を選ぶ</p>
+<div class="language-grid">
+<div><label for="langA">こちらの言語</label><select id="langA"></select></div>
+<button class="swap" id="swap" aria-label="言語を入れ替える">⇄</button>
+<div><label for="langB">相手の言語</label><select id="langB"></select></div>
 </div>
 </section>
 <section class="panel">
-<label for="source">話す内容・翻訳する文章</label>
-<textarea id="source" placeholder="ここに文章を入力するか、マイクで話してください。"></textarea>
-<div class="actions"><button class="secondary" id="mic">🎙 音声入力</button><button class="primary" id="translate">翻訳する</button></div>
-<div class="status" id="status" role="status"></div>
+<p class="section-title">② 話す人のボタンを押す</p>
+<div class="talk-grid">
+<button class="talk-button" id="talkA"><span id="labelA">日本語で話す</span><span>🎙 押して話す</span></button>
+<button class="talk-button" id="talkB"><span id="labelB">Englishで話す</span><span>🎙 Tap to speak</span></button>
+</div>
+<div class="status" id="status" role="status" aria-live="polite">話す人のボタンを押してください。</div>
 </section>
 <section class="panel">
-<label>翻訳結果</label><div class="output" id="result">翻訳結果がここに表示されます。</div>
-<div class="actions"><button class="secondary" id="speak">🔊 読み上げ</button><button class="secondary" id="copy">コピー</button></div>
+<p class="section-title">聞き取った言葉</p>
+<label for="source">音声が文字になります。文字を直接入力してもOK。</label>
+<textarea id="source" placeholder="ここに話した言葉が表示されます。"></textarea>
+<div class="actions"><button class="small-button" id="translate">この文章を翻訳</button><button class="small-button" id="clear">消去</button></div>
 </section>
-<p class="note">※音声入力は対応ブラウザ・マイク権限が必要です。翻訳にはインターネット接続を使用します。個人情報や機密情報の翻訳には使用しないでください。</p>
+<section class="panel">
+<p class="section-title">翻訳した言葉</p>
+<div class="output" id="result" aria-live="polite">翻訳結果がここに表示されます。</div>
+<div class="actions"><button class="small-button" id="speak">🔊 もう一度聞く</button><button class="small-button" id="copy">コピー</button></div>
+</section>
+<p class="hint">無料の翻訳サービスを利用します。インターネット接続が必要です。無料サービスの混雑や利用制限により、翻訳に時間がかかる場合があります。音声入力・読み上げは端末やブラウザの対応状況によって使えない場合があります。</p>
 </main>
 <script>
-const langs=[["日本語","ja"],["英語","en"],["中国語（簡体字）","zh"],["韓国語","ko"],["フランス語","fr"],["スペイン語","es"],["ドイツ語","de"],["イタリア語","it"],["ポルトガル語","pt"],["タイ語","th"]];
-const from=document.querySelector("#from"),to=document.querySelector("#to"),source=document.querySelector("#source"),result=document.querySelector("#result"),status=document.querySelector("#status");
-for(const [name,code] of langs){from.add(new Option(name,code));to.add(new Option(name,code))}
-from.value="ja";to.value="en";
-document.querySelector("#swap").onclick=()=>{const v=from.value;from.value=to.value;to.value=v};
-document.querySelector("#translate").onclick=async()=>{
- const q=source.value.trim();if(!q){status.textContent="文章を入力するか、音声入力してください。";return}
- if(from.value===to.value){result.textContent=q;status.textContent="翻訳元と翻訳先が同じため、そのまま表示しました。";return}
- status.textContent="翻訳しています…";document.querySelector("#translate").disabled=true;
- try{const url="https://api.mymemory.translated.net/get?q="+encodeURIComponent(q)+"&langpair="+encodeURIComponent(from.value+"|"+to.value);
- const res=await fetch(url);if(!res.ok)throw new Error("通信エラー");const data=await res.json();
- if(data.responseStatus!==200)throw new Error(data.responseDetails||"翻訳できませんでした");
- result.textContent=data.responseData.translatedText;status.textContent="翻訳しました。";
- }catch(e){status.textContent="翻訳に失敗しました。通信状態を確認して、短い文章でもう一度試してください。"}
- finally{document.querySelector("#translate").disabled=false}
-};
-document.querySelector("#mic").onclick=()=>{
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){status.textContent="このブラウザは音声入力に対応していません。文章を入力してください。";return}
- const rec=new SR();rec.lang=from.value==="zh"?"zh-CN":from.value;rec.interimResults=false;rec.onresult=e=>{source.value=e.results[0][0].transcript;status.textContent="音声を文字にしました。"};rec.onerror=()=>status.textContent="音声入力に失敗しました。マイクの許可を確認してください。";rec.start();status.textContent="聞き取り中…";
-};
-document.querySelector("#speak").onclick=()=>{
- const text=result.textContent;if(!text||text==="翻訳結果がここに表示されます。")return;
- speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=to.value==="zh"?"zh-CN":to.value;speechSynthesis.speak(u);
-};
-document.querySelector("#copy").onclick=async()=>{try{await navigator.clipboard.writeText(result.textContent);status.textContent="翻訳結果をコピーしました。"}catch{status.textContent="コピーできませんでした。"}};
-if ("serviceWorker" in navigator && location.protocol === "https:") {
-  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+const languages=[["日本語","ja","ja-JP"],["English","en","en-US"],["中文（简体）","zh","zh-CN"],["한국어","ko","ko-KR"],["Français","fr","fr-FR"],["Español","es","es-ES"],["Deutsch","de","de-DE"],["Italiano","it","it-IT"],["Português","pt","pt-PT"],["ไทย","th","th-TH"]];
+const langA=document.querySelector("#langA"),langB=document.querySelector("#langB");
+const source=document.querySelector("#source"),result=document.querySelector("#result"),status=document.querySelector("#status");
+const talkA=document.querySelector("#talkA"),talkB=document.querySelector("#talkB");
+const labelA=document.querySelector("#labelA"),labelB=document.querySelector("#labelB");
+const cache=new Map();
+let recognition=null,finalText="",activeSide="",cancelled=false,requestController=null;
+for(const [name,code] of languages){langA.add(new Option(name,code));langB.add(new Option(name,code))}
+langA.value="ja";langB.value="en";
+function languageName(code){return languages.find(x=>x[1]===code)?.[0]||code}
+function speechCode(code){return languages.find(x=>x[1]===code)?.[2]||code}
+function updateLabels(){labelA.textContent=languageName(langA.value)+"で話す";labelB.textContent=languageName(langB.value)+"で話す"}
+function setStatus(message){status.textContent=message}
+function stopListening(){if(recognition){cancelled=true;try{recognition.stop()}catch{} } }
+document.querySelector("#swap").onclick=()=>{const old=langA.value;langA.value=langB.value;langB.value=old;updateLabels()};
+langA.onchange=updateLabels;langB.onchange=updateLabels;
+async function translateText(autoSpeak=false){
+ const text=source.value.trim();
+ if(!text){setStatus("先に話すか、文章を入力してください。");return}
+ const from=activeSide==="B"?langB.value:langA.value;
+ const to=activeSide==="B"?langA.value:langB.value;
+ if(from===to){result.textContent=text;setStatus("同じ言語なので、そのまま表示しました。");return}
+ const key=from+"|"+to+"|"+text;
+ if(cache.has(key)){result.textContent=cache.get(key);setStatus("翻訳しました。");if(autoSpeak)readAloud(to);return}
+ if(requestController)requestController.abort();
+ requestController=new AbortController();
+ const timer=setTimeout(()=>requestController?.abort(),15000);
+ setStatus("翻訳しています…");
+ try{
+  const url="https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair="+encodeURIComponent(from+"|"+to);
+  const response=await fetch(url,{signal:requestController.signal});
+  if(!response.ok)throw new Error("network");
+  const data=await response.json();
+  if(data.responseStatus!==200)throw new Error(data.responseDetails||"service");
+  const translated=data.responseData?.translatedText;
+  if(!translated)throw new Error("empty");
+  result.textContent=translated;cache.set(key,translated);
+  setStatus("翻訳できました。");
+  if(autoSpeak)readAloud(to);
+ }catch(error){
+  if(error.name==="AbortError")setStatus("翻訳に時間がかかっています。通信を確認して、もう一度お試しください。");
+  else setStatus("翻訳できませんでした。少し待ってから、もう一度お試しください。");
+ }finally{clearTimeout(timer);requestController=null}
 }
+function readAloud(code){
+ const text=result.textContent;
+ if(!text||text==="翻訳結果がここに表示されます。")return;
+ if(!("speechSynthesis" in window)){setStatus("この端末では読み上げに対応していません。");return}
+ speechSynthesis.cancel();
+ const utterance=new SpeechSynthesisUtterance(text);
+ utterance.lang=speechCode(code);
+ utterance.onstart=()=>setStatus("翻訳した言葉を読み上げています。");
+ utterance.onerror=()=>setStatus("自動読み上げできない場合は「もう一度聞く」を押してください。");
+ utterance.onend=()=>setStatus("次の会話ができます。");
+ speechSynthesis.speak(utterance);
+}
+function startListening(side){
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SpeechRecognition){setStatus("このブラウザは音声入力に対応していません。下の欄に文字を入力してください。");return}
+ if(recognition){stopListening();return}
+ activeSide=side;finalText="";cancelled=false;source.value="";
+ const from=side==="A"?langA.value:langB.value;
+ const to=side==="A"?langB.value:langA.value;
+ if(from===to){setStatus("異なる言語を選んでください。");return}
+ const rec=new SpeechRecognition();recognition=rec;
+ rec.lang=speechCode(from);rec.interimResults=true;rec.continuous=false;rec.maxAlternatives=1;
+ talkA.classList.toggle("listening",side==="A");talkB.classList.toggle("listening",side==="B");
+ setStatus(languageName(from)+"で話してください。話し終わると自動で翻訳します。");
+ rec.onresult=(event)=>{
+  let interim="";
+  for(let i=event.resultIndex;i<event.results.length;i++){
+   const piece=event.results[i][0].transcript;
+   if(event.results[i].isFinal)finalText+=piece;else interim+=piece;
+  }
+  source.value=(finalText+interim).trim();
+ };
+ rec.onerror=(event)=>{
+  if(event.error==="not-allowed"||event.error==="service-not-allowed")setStatus("マイクの使用が許可されていません。ブラウザの設定を確認してください。");
+  else if(event.error!=="no-speech"&&event.error!=="aborted")setStatus("音声を聞き取れませんでした。もう一度お試しください。");
+ };
+ rec.onend=()=>{
+  recognition=null;talkA.classList.remove("listening");talkB.classList.remove("listening");
+  const heard=finalText.trim();
+  if(heard){source.value=heard;activeSide=side;translateText(true)}
+  else if(!cancelled)setStatus("声を確認できませんでした。マイクに近づいて、もう一度お試しください。");
+  cancelled=false;
+ };
+ try{rec.start()}catch{recognition=null;talkA.classList.remove("listening");talkB.classList.remove("listening");setStatus("音声入力を開始できませんでした。もう一度お試しください。")}
+}
+talkA.onclick=()=>startListening("A");
+talkB.onclick=()=>startListening("B");
+document.querySelector("#translate").onclick=()=>translateText(false);
+document.querySelector("#speak").onclick=()=>{const code=activeSide==="B"?langA.value:langB.value;readAloud(code)};
+document.querySelector("#copy").onclick=async()=>{try{await navigator.clipboard.writeText(result.textContent);setStatus("翻訳結果をコピーしました。")}catch{setStatus("コピーできませんでした。翻訳結果を長押ししてコピーしてください。")}};
+document.querySelector("#clear").onclick=()=>{source.value="";result.textContent="翻訳結果がここに表示されます。";setStatus("入力と翻訳結果を消去しました。")};
+if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
 </script>
-</body></html>
+</body>
+</html>
